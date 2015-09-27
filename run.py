@@ -15,9 +15,11 @@ from yowsup.layers.protocol_calls              import YowCallsProtocolLayer
 from yowsup.common import YowConstants
 from yowsup import env
 import logging
+import RPi.GPIO as GPIO
 
 class YowsupEchoStack(object):
     def __init__(self, credentials, encryptionEnabled = False):
+	GPIO.cleanup()
         if encryptionEnabled:
             from yowsup.layers.axolotl                     import YowAxolotlLayer
             layers = (
@@ -46,6 +48,26 @@ class YowsupEchoStack(object):
 
     def start(self):
         self.stack.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_CONNECT))
+	GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+	GPIO.setup(21, GPIO.OUT)	#Led 1
+	GPIO.setup(20, GPIO.OUT)	#Led 2
+	GPIO.setup(16, GPIO.OUT)        #Led 3
+	GPIO.setup(12, GPIO.OUT)        #Led 4
+	GPIO.setup(25, GPIO.OUT)        #Led 5
+	GPIO.setup(24, GPIO.OUT)        #Led 6
+	GPIO.setup(23, GPIO.OUT)        #Led 7
+	GPIO.setup(18, GPIO.OUT)        #Led 8
+
+	GPIO.output(21, GPIO.LOW)
+	GPIO.output(20, GPIO.LOW)
+	GPIO.output(16, GPIO.LOW)
+        GPIO.output(12, GPIO.LOW)
+	GPIO.output(25, GPIO.LOW)
+        GPIO.output(24, GPIO.LOW)
+	GPIO.output(23, GPIO.LOW)
+        GPIO.output(18, GPIO.LOW)
+
         try:
             self.stack.loop()
         except AuthError as e:
